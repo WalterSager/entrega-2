@@ -1,0 +1,115 @@
+<div class="container">
+    <h1>Lista de productos en tiempo real</h1>
+    <ul id="listaProductos"></ul>
+
+    <h2>Ingresa los datos del nuevo producto</h2>  
+    <form id="formProducto">   
+        <input type="text" id="title" placeholder="Nombre" required>
+        <input type="text" id="description" placeholder="Descripcion" required>
+        <input type="text" id="code" placeholder="Codigo" required>
+        <input type="number" id="price" placeholder="Precio" required>
+        <input type="number" id="stock" placeholder="Stock" required>
+        <input type="text" id="category" placeholder="Categoria" required>
+        <button type="submit">Agregar</button>
+    </form>
+</div>
+
+<script>
+    const socket = io();
+
+    document.addEventListener("DOMContentLoaded", async () => {
+        const lista = document.getElementById("listaProductos");
+
+        try {
+            const res = await fetch("/api/products");
+            const productos = await res.json();
+
+            if (productos.length === 0) {
+                lista.innerHTML = "<li>No hay productos disponibles.</li>";
+            } else {
+                productos.forEach(producto => agregarProductoDOM(producto));
+            }
+        } catch (error) {
+            console.error("Error al cargar productos existentes:", error);
+        }
+
+        document.getElementById("formProducto").addEventListener("submit", async (e) => {
+            e.preventDefault();
+            
+            const title = document.getElementById("title").value.trim();
+            const description = document.getElementById("description").value.trim();
+            const code = document.getElementById("code").value.trim();
+            const price = parseFloat(document.getElementById("price").value);
+            const stock = parseInt(document.getElementById("stock").value);
+            const category = document.getElementById("category").value.trim();
+
+            if (!title || !description || !code || isNaN(price) || price <= 0 || isNaN(stock) || stock < 0 || !category) {
+                alert("Todos los campos son obligatorios y deben ser válidos.");
+                return;
+            }
+
+            const newProduct = { title, description, code, price, stock, category };
+
+            try {
+                const res = await fetch("/api/products", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(newProduct)
+                });
+
+                const data = await res.json();
+
+                if (data.error) {
+                    alert(`Error: ${data.error}`);
+                    return;
+                }
+
+                console.log("Producto agregado correctamente:", data);
+                socket.emit("nuevoProducto", data);
+
+            } catch (error) {
+                console.error("Error al enviar el producto:", error);
+                alert("Hubo un error al enviar el producto. Revisa la consola.");
+            }
+        });
+
+        socket.on("actualizarProductos", (producto) => {
+            if (!producto || !producto.id) {
+                console.error("Producto recibido sin ID:", producto);
+                return;
+            }
+            agregarProductoDOM(producto);
+        });
+
+        socket.on("productoEliminado", (productId) => {
+            const item = document.getElementById(`producto-${productId}`);
+            if (item) {
+                item.remove();
+            }
+        });
+    });
+
+    function agregarProductoDOM(producto) {
+        const lista = document.getElementById("listaProductos");
+        const item = document.createElement("li");
+        item.setAttribute("id", `producto-${producto.id}`);
+        item.innerHTML = `
+            <strong>ID:</strong> ${producto.id} - 
+            <strong>${producto.title}</strong> - $${producto.price} 
+            <button onclick="eliminarProducto('${producto.id}')">Borrar</button>`;
+        lista.appendChild(item);
+    }
+
+    function eliminarProducto(id) {
+        fetch(`/api/products/${id}`, { method: "DELETE" })
+            .then(async (res) => {
+                const data = await res.json();
+                if (!res.ok) {
+                    alert(`Error: ${data.error || "No se pudo eliminar el producto"}`);
+                    return;
+                }
+                socket.emit("eliminarProducto", id);
+            })
+            .catch(error => console.error("Error al eliminar producto:", error));
+    }
+</script>

@@ -1,0 +1,35 @@
+[
+  {
+    "id": 1,
+    "title": "Termo Stanley",
+    "description": "Termo stanley para tomar mates con capacidad de 1,2L",
+    "code": "TS12L",
+    "price": 91599,
+    "status": true,
+    "stock": 10,
+    "category": "Bazar",
+    "thumbnails": []
+  },
+  {
+    "id": 2,
+    "title": "Notebook ASUS VivoBook 15",
+    "description": "Procesador i5, 16gb ram y 512gb ssd",
+    "code": "NTBKVS5",
+    "price": 600000,
+    "status": true,
+    "stock": 5,
+    "category": "Electronica",
+    "thumbnails": []
+  },
+  {
+    "id": 3,
+    "title": "Notebook HP",
+    "description": "Procesador AMD Ryzen 5, 8gb ram y 512gb ssd",
+    "code": "NTBHPRZ5",
+    "price": 550600,
+    "status": true,
+    "stock": 5,
+    "category": "Electronica",
+    "thumbnails": []
+  }
+]
