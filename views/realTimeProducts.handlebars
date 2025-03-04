@@ -43,7 +43,7 @@
             const stock = parseInt(document.getElementById("stock").value);
             const category = document.getElementById("category").value.trim();
 
-            if (!title || !description || !code || isNaN(price) || price <= 0 || isNaN(stock) || stock < 0 || !category) {
+            if (!title || !description || !code || isNaN(price) || price <= 0 || isNaN(stock) || stock < 0 || !category || category.length < 4) {
                 alert("Todos los campos son obligatorios y deben ser válidos.");
                 return;
             }
@@ -59,7 +59,7 @@
 
                 const data = await res.json();
 
-                if (data.error) {
+                if (!res.ok) {
                     alert(`Error: ${data.error}`);
                     return;
                 }
@@ -68,8 +68,8 @@
                 socket.emit("nuevoProducto", data);
 
             } catch (error) {
-                console.error("Error al enviar el producto:", error);
-                alert("Hubo un error al enviar el producto. Revisa la consola.");
+                console.error("Error al agregar el producto:", error);
+                alert("Hubo un error al agregar el producto.");
             }
         });
 
@@ -94,7 +94,6 @@
         const item = document.createElement("li");
         item.setAttribute("id", `producto-${producto.id}`);
         item.innerHTML = `
-            <strong>ID:</strong> ${producto.id} - 
             <strong>${producto.title}</strong> - $${producto.price} 
             <button onclick="eliminarProducto('${producto.id}')">Borrar</button>`;
         lista.appendChild(item);

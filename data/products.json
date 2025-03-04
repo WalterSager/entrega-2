@@ -31,5 +31,38 @@
     "stock": 5,
     "category": "Electronica",
     "thumbnails": []
+  },
+  {
+    "id": 4,
+    "title": "Jarra Stanley 550ml",
+    "description": "Jarro ideal para mantener bebidas frescas",
+    "code": "JS550ML",
+    "price": 25000,
+    "status": true,
+    "stock": 50,
+    "category": "Bazar",
+    "thumbnails": []
+  },
+  {
+    "id": 5,
+    "title": "Prueba",
+    "description": "prueba",
+    "code": "prueba",
+    "price": 20,
+    "status": true,
+    "stock": 20,
+    "category": "Prueba",
+    "thumbnails": []
+  },
+  {
+    "id": 6,
+    "title": "Funciona",
+    "description": "Funciona",
+    "code": "Funciona",
+    "price": 10,
+    "status": true,
+    "stock": 9,
+    "category": "funciona",
+    "thumbnails": []
   }
 ]

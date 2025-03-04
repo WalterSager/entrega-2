@@ -26,14 +26,27 @@ class ProductManager {
   }
 
   async addProduct({ title, description, code, price, status = true, stock, category, thumbnails }) {
-    const products = await this.getProducts();
+    try {
+      const products = await this.getProducts();
 
     if (!title || !code || !price || !stock || !category) {
         throw new Error("Todos los campos son obligatorios")
     }
 
+    if (typeof code !== "string" || code.trim().length < 3) {
+      throw new Error("El código debe tener al menos 3 caracteres.");
+    }
+
     if (products.some(p => p.code === code)) {
         throw new Error (`El codigo " ${code} " ya existe.`);
+    }
+
+    if (typeof title !== "string" || title.trim().length < 4) {
+      throw new Error("El título debe tener al menos 4 caracteres.");
+    }
+
+    if (typeof category !== "string" || category.trim().length < 4) {
+      throw new Error("La categoría debe tener al menos 4 caracteres.");
     }
 
     const newProduct = {
@@ -58,6 +71,11 @@ class ProductManager {
     }
 
     return newProduct;
+
+    } catch (error) {
+        console.error("Error en addProduct:", error.message);
+        throw error;
+    }
 
   }
 
