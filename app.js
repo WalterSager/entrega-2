@@ -3,8 +3,8 @@ const { createServer } = require("http");
 const { Server } = require("socket.io");
 const exphbs = require("express-handlebars");
 const path = require("path");
-const routes = require("./routes/index");
-const ProductManager = require("./managers/ProductManager");
+const routes = require("./src/routes/index");
+const ProductManager = require("./src/managers/ProductManager");
 
 
 const app = express();
@@ -14,11 +14,11 @@ const productManager = new ProductManager(io);
 
 app.engine("handlebars", exphbs.engine());
 app.set("view engine", "handlebars");
-app.set("views", path.join(__dirname, "views"));
+app.set("views", path.join(__dirname, "/src/views"));
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(express.static(path.join(__dirname, "public")));
+app.use(express.static(path.join(__dirname, "/src/public")));
 app.use("/modules", express.static("node_modules"));
 
 
