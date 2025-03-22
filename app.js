@@ -11,6 +11,9 @@ const app = express();
 const httpServer = createServer(app);
 const io = new Server(httpServer);
 const productManager = new ProductManager(io);
+const socketConfig = require("./src/socket/socket");
+
+socketConfig(io, productManager);
 
 app.engine("handlebars", exphbs.engine());
 app.set("view engine", "handlebars");
@@ -53,21 +56,6 @@ app.post("/api/products", async (req, res) => {
         console.error("Error en addProduct:", error.message);
         res.status(400).json({ error: "Error al agregar producto. Verifica los campos." });
     }
-});
-
-
-io.on("connection", (socket) => {
-    console.log("Nuevo cliente conectado");
-
-    socket.on("nuevoProducto", (producto) => {
-        console.log("Nuevo producto recibido:", producto);
-        io.emit("actualizarProductos", producto);
-    });
-
-    socket.on("eliminarProducto", (productId) => {
-        console.log(`Producto eliminado con ID: ${productId}`);
-        io.emit("productoEliminado", productId);
-    });
 });
 
 module.exports = httpServer;
