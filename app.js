@@ -21,16 +21,20 @@ const productManager = new ProductManager(io);
 
 socketConfig(io, productManager);
 
-app.engine("handlebars", exphbs.engine());
-app.set("view engine", "handlebars");
-app.set("views", path.join(__dirname, "/src/views"));
-
 const hbs = exphbs.create({
+    helpers: {
+      eq: (a, b) => a === b,
+    },
+
     runtimeOptions: {
-      allowProtoPropertiesByDefault: true,
-      allowProtoMethodsByDefault: true,
-    }
+        allowProtoPropertiesByDefault: true,
+        allowProtoMethodsByDefault: true,
+      }
   });
+  
+  app.engine("handlebars", hbs.engine);
+  app.set("view engine", "handlebars");
+  app.set("views", path.join(__dirname, "/src/views"));
   
   app.engine("handlebars", hbs.engine);
   

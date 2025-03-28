@@ -19,7 +19,6 @@ router.get("/products", async (req, res) => {
           $or: [
             { category: { $regex: query, $options: "i" } },
             { title: { $regex: query, $options: "i" } },
-            { status: query === "true" || query === "false" ? query === "true" : undefined }
           ],
         }
       : {};
@@ -34,14 +33,22 @@ router.get("/products", async (req, res) => {
       nextPage: result.nextPage,
       page: result.page,
       totalPages: result.totalPages,
-      prevLink: result.hasPrevPage ? `/products?page=${result.prevPage}` : null,
-      nextLink: result.hasNextPage ? `/products?page=${result.nextPage}` : null,
+      query,
+      limit,
+      sort,
+      prevLink: result.hasPrevPage
+        ? `/products?page=${result.prevPage}&limit=${limit}&query=${query || ""}&sort=${sort || ""}`
+        : null,
+      nextLink: result.hasNextPage
+        ? `/products?page=${result.nextPage}&limit=${limit}&query=${query || ""}&sort=${sort || ""}`
+        : null,
     });
   } catch (error) {
     console.error("Error en /products:", error.message);
     res.status(500).send("Error al cargar la vista de productos");
   }
 });
+
 
 
 router.get("/products/:pid", async (req, res) => {

@@ -1,22 +1,23 @@
 <div class="container">
 
   <form id="filtros" method="GET" action="/products">
-  <input type="text" name="query" placeholder="Buscar por categoría o disponibilidad" />
+  <input type="text" name="query" placeholder="Buscar por categoría o disponibilidad" value="{{query}}" />
   
   <select name="sort">
     <option value="">Ordenar por</option>
-    <option value="asc">Precio ascendente</option>
-    <option value="desc">Precio descendente</option>
+    <option value="asc" {{#if (eq sort "asc")}}selected{{/if}}>Precio ascendente</option>
+    <option value="desc" {{#if (eq sort "desc")}}selected{{/if}}>Precio descendente</option>
   </select>
 
   <select name="limit">
-    <option value="5">5 por página</option>
-    <option value="10" selected>10 por página</option>
-    <option value="20">20 por página</option>
+    <option value="5" {{#if (eq limit "5")}}selected{{/if}}>5 por página</option>
+    <option value="10" {{#if (eq limit "10")}}selected{{/if}}>10 por página</option>
+    <option value="20" {{#if (eq limit "20")}}selected{{/if}}>20 por página</option>
   </select>
 
   <button type="submit">Aplicar filtros</button>
 </form>
+
 
 
   <h2>Productos Disponibles</h2>
