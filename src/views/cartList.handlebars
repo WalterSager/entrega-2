@@ -1,0 +1,21 @@
+<div class="container">
+  <h2>Lista de Carritos</h2>
+
+  {{#if carts.length}}
+    <ul>
+      {{#each carts}}
+        <li>
+          <strong>Carrito</strong> <br>  
+          <strong>Productos:</strong> {{this.products.length}}<br/>
+          <a href="/carts/{{this._id}}" style="color: red;">Ver Detalles</a>
+          <button onclick="eliminarCarrito('{{this._id}}')">Eliminar</button>
+        </li>
+      {{/each}}
+    </ul>
+  {{else}}
+    <p>No hay carritos disponibles.</p>
+  {{/if}}
+</div>
+
+
+<script src="/js/cartDelete.js"></script>

@@ -3,15 +3,21 @@ const { createServer } = require("http");
 const { Server } = require("socket.io");
 const exphbs = require("express-handlebars");
 const path = require("path");
-const routes = require("./src/routes/index");
-const ProductManager = require("./src/managers/ProductManager");
 
+const routes = require("./src/routes/index");
+const viewsRouter = require("./src/routes/views.routes");
+const connectDB = require("./src/config/db");
+
+const ProductManager = require("./src/managers/ProductManager");
+const socketConfig = require("./src/socket/socket");
 
 const app = express();
 const httpServer = createServer(app);
 const io = new Server(httpServer);
+
+connectDB();
+
 const productManager = new ProductManager(io);
-const socketConfig = require("./src/socket/socket");
 
 socketConfig(io, productManager);
 
@@ -19,42 +25,44 @@ app.engine("handlebars", exphbs.engine());
 app.set("view engine", "handlebars");
 app.set("views", path.join(__dirname, "/src/views"));
 
+const hbs = exphbs.create({
+    runtimeOptions: {
+      allowProtoPropertiesByDefault: true,
+      allowProtoMethodsByDefault: true,
+    }
+  });
+  
+  app.engine("handlebars", hbs.engine);
+  
+// Middlewares
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, "/src/public")));
 app.use("/modules", express.static("node_modules"));
 
-
+// Rutas
 app.use("/api", routes);
+app.use("/", viewsRouter);
 
-app.get("/", async (req, res) => {
-    try {
-        const productos = await productManager.getProducts();
-        res.render("home", { productos });
-    } catch (error) {
-        console.error("Error al obtener productos", error);
-        res.status(500).send("Error al cargar la página");
-    }
+// home productos
+app.get("/", (req, res) => {
+    res.redirect("/products");
 });
 
-app.get("/realtimeproducts", async (req, res) => {
-    try {
-        res.render("realTimeProducts");
-    } catch (error) {
-        console.error("Error al cargar realTimeProducts", error);
-        res.status(500).send("Error al cargar la página en tiempo real.");
-    }
+// realtime
+app.get("/realtimeproducts", (req, res) => {
+    res.render("realTimeProducts");
 });
-app.post("/api/products", async (req, res) => {
-    try {
-        console.log("Datos enviados al back:", req.body);
 
+// agregar producto desde formulario (WebSocket)
+app.post("/api/product", async (req, res) => {
+    try {
         const newProduct = await productManager.addProduct(req.body);
-        io.emit("actualizarProductos", newProduct);
+        io.emit("actualizarProductos", newProduct); // Socket en acción 🔥
         res.status(201).json(newProduct);
     } catch (error) {
         console.error("Error en addProduct:", error.message);
-        res.status(400).json({ error: "Error al agregar producto. Verifica los campos." });
+        res.status(400).json({ error: error.message });
     }
 });
 

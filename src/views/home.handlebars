@@ -1,8 +1,55 @@
 <div class="container">
-    <h2>Productos</h2>
-    <ul>
-        {{#each productos}}
-            <li><strong>{{this.title}}</strong> - ${{this.price}}</li>
-        {{/each}}
-    </ul>
+
+  <form id="filtros" method="GET" action="/products">
+  <input type="text" name="query" placeholder="Buscar por categoría o disponibilidad" />
+  
+  <select name="sort">
+    <option value="">Ordenar por</option>
+    <option value="asc">Precio ascendente</option>
+    <option value="desc">Precio descendente</option>
+  </select>
+
+  <select name="limit">
+    <option value="5">5 por página</option>
+    <option value="10" selected>10 por página</option>
+    <option value="20">20 por página</option>
+  </select>
+
+  <button type="submit">Aplicar filtros</button>
+</form>
+
+
+  <h2>Productos Disponibles</h2>
+
+  <ul>
+  {{#each products}}
+    <li>
+      <strong>{{title}}</strong> - ${{price}} | Categoría: {{category}} <br>
+      <a href="/products/{{_id}}">Ver Detalles</a>
+      <button onclick="agregarAlCarrito('{{_id}}')">Agregar al carrito</button>
+    </li>
+  {{/each}}
+</ul>
+
+
+
+  <div>
+    {{#if hasPrevPage}}
+      <a href="{{prevLink}}">Atras</a>
+    {{/if}}
+
+    Página {{page}} de {{totalPages}}
+
+    {{#if hasNextPage}}
+      <a href="{{nextLink}}">Siguiente</a>
+    {{/if}}
+  </div>
+
+    <div class="carlist">
+        <a href="/carts">Ver Todos los Carritos</a>
+    </div>
+  
+
 </div>
+
+<script src="/js/addProductCart.js"></script>

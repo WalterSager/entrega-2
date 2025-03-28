@@ -72,3 +72,12 @@ li a{
     color: #f55;
     text-decoration: none;
 }
+
+a{
+    color: rgb(0, 145, 241);
+    text-decoration: none;
+}
+
+.carlist {
+    margin: 21px;
+}
